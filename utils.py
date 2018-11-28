@@ -2,6 +2,7 @@ import numpy as np
 import torch
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 import PIL
 from hyperparameters import HyperParameters
 
