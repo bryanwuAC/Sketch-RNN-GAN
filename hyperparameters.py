@@ -6,7 +6,7 @@ class HyperParameters:
         ## Encoding vector dimension
         self.latent_vector_length = 128
         self.num_mixture = 20
-        self.data_path = "cat.npz"
+        self.data_path = "sketchrnn_bee.npz"
         self.limit = 1000
         self.epsilon = 1e-5
         self.batch_size = 100
