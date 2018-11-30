@@ -101,4 +101,5 @@ for i in range(hps.num_epoch):
 
     print('epoch', i, 'generator loss', loss_G.data[0], "Ls", Ls, "Lp", Lp, 'discriminator loss', loss_D.data[0])
     if (i % 100 == 0):
+        torch.save(generator, hps.model_path)
         utils.generate_image_with_model(N_max, generator, i)

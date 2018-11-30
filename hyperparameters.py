@@ -6,7 +6,9 @@ class HyperParameters:
         ## Encoding vector dimension
         self.latent_vector_length = 128
         self.num_mixture = 20
-        self.data_path = "sketchrnn_bee.npz"
+        self.file_name = "sketchrnn_dog"
+        self.data_path = "dataset/{}.npz".format(self.file_name)
+        self.model_path = "saved_models/{}.pkl".format(self.file_name)
         self.limit = 1000
         self.epsilon = 1e-5
         self.batch_size = 100
