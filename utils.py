@@ -4,6 +4,7 @@ from torch.autograd import Variable
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 import PIL
+import os
 from hyperparameters import HyperParameters
 
 hps = HyperParameters()
@@ -73,7 +74,7 @@ def generate_sequences_from_distributions(pi, mu_x, mu_y, sigma_x, sigma_y, rho_
     return result_sequences
 
 
-def make_image(sequence, epoch, name='_output_'):
+def make_image(sequence, epoch, dataset_name):
     strokes = np.split(sequence, np.where(sequence[:, 3] > 0)[0] + 1)
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
@@ -83,7 +84,8 @@ def make_image(sequence, epoch, name='_output_'):
     canvas.draw()
     pil_image = PIL.Image.frombytes('RGB', canvas.get_width_height(),
                                     canvas.tostring_rgb())
-    name = "output_images/{}_output_.jpg".format(str(epoch))
+    os.makedirs(hps.output_dir.format(dataset_name), exist_ok=True)
+    name = hps.output_path.format(dataset_name, str(epoch))
     pil_image.save(name, "JPEG")
     plt.close("all")
 
@@ -114,14 +116,7 @@ def generate_sequences_with_model(N_max, generator):
     return sequence
 
 
-def generate_image_with_model(N_max, generator, epoch):
+def generate_image_with_model(N_max, generator, epoch, dataset_name):
     sequence = generate_sequences_with_model(N_max, generator)
-    make_image(sequence, epoch)
+    make_image(sequence, epoch, dataset_name)
 
-
-def lr_decay(optimizer):
-    """Decay learning rate by a factor of lr_decay"""
-    for param_group in optimizer.param_groups:
-        if param_group['lr'] > hps.min_lr:
-            param_group['lr'] *= hps.lr_decay
-    return optimizer
