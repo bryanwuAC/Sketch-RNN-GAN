@@ -16,7 +16,7 @@ class HyperParameters:
         ## Temperature hyperparameter
         self.tau = 0.4
         self.gan_loss_weight = 0.5
-        self.num_epoch = 1
+        self.num_epoch = 8000
         self.lr_decay = 0.9999
         self.min_lr = 0.00001
         self.lr = 0.001
