@@ -74,7 +74,7 @@ def generate_sequences_from_distributions(pi, mu_x, mu_y, sigma_x, sigma_y, rho_
     return result_sequences
 
 
-def make_image(sequence, epoch, dataset_name):
+def make_image(sequence, image_name, dataset_name, tau, adv_loss_weight):
     strokes = np.split(sequence, np.where(sequence[:, 3] > 0)[0] + 1)
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
@@ -84,11 +84,12 @@ def make_image(sequence, epoch, dataset_name):
     canvas.draw()
     pil_image = PIL.Image.frombytes('RGB', canvas.get_width_height(),
                                     canvas.tostring_rgb())
-    os.makedirs(hps.output_dir.format(dataset_name), exist_ok=True)
-    name = hps.output_path.format(dataset_name, str(epoch))
+
+    output_dir = hps.output_dir.format(dataset_name, tau, adv_loss_weight)
+    os.makedirs(output_dir, exist_ok=True)
+    name = hps.output_path.format(output_dir, image_name)
     pil_image.save(name, "JPEG")
     plt.close("all")
-
 
 def generate_sequences_with_model(N_max, generator):
     z = Variable(torch.zeros(1, hps.latent_vector_length).cuda().float())
@@ -116,7 +117,14 @@ def generate_sequences_with_model(N_max, generator):
     return sequence
 
 
-def generate_image_with_model(N_max, generator, epoch, dataset_name):
-    sequence = generate_sequences_with_model(N_max, generator)
-    make_image(sequence, epoch, dataset_name)
+def generate_image_with_model(N_max, generator, dataset_name, tau, adv_loss_weight, epoch=-1, num_images=1):
+    for i in range(num_images):
+        sequence = generate_sequences_with_model(N_max, generator)
+        if epoch == -1:
+            make_image(sequence, "{}".format(i), dataset_name, tau, adv_loss_weight)
+        else:
+            make_image(sequence, "{}".format(epoch), dataset_name, tau, adv_loss_weight)
 
+def get_dataset_name_from_model_name(model_name):
+    name_list = model_name.split("_")
+    return name_list[0]+"_"+name_list[1]

@@ -7,9 +7,6 @@ from hyperparameters import HyperParameters
 from discriminator import Discriminator
 from generator import Generator
 
-from os import listdir
-from os.path import isfile, join
-
 Tensor = torch.cuda.FloatTensor
 
 
@@ -91,7 +88,7 @@ class Model:
                                                                     q)
 
             # Total loss
-            loss_G = (1 - self.hps.gan_loss_weight) * loss_content + self.hps.gan_loss_weight * loss_GAN
+            loss_G = (1 - self.hps.adv_loss_weight) * loss_content + self.hps.adv_loss_weight * loss_GAN
 
             loss_G.backward()
             optimizer_G.step()
@@ -111,13 +108,7 @@ class Model:
 
             print('epoch', i, 'generator loss', loss_G.data[0], 'discriminator loss', loss_D.data[0])
             if (i % 100 == 0):
-                torch.save(self.generator, self.hps.model_path.format(self.dataset_name))
-                utils.generate_image_with_model(self.N_max, self.generator, i, self.dataset_name)
-
-
-if __name__ == '__main__':
-    dataset_dir = "dataset/"
-    dataset_list = [f for f in listdir(dataset_dir) if isfile(join(dataset_dir, f))]
-    for dataset_name in dataset_list:
-        model = Model(dataset_name[:-4])
-        model.train()
+                torch.save(self,
+                           self.hps.model_path.format(self.dataset_name, self.hps.tau, self.hps.adv_loss_weight))
+                utils.generate_image_with_model(self.N_max, self.generator, self.dataset_name, self.hps.tau,
+                                                self.hps.adv_loss_weight, epoch=i)
