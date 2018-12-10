@@ -6,4 +6,4 @@ if __name__ == '__main__':
     for experiment_tau in tau_list:
         model = Model(dataset_name[:-4])
         model.hps.tau = experiment_tau
-        model.train()
+        model.train_GAN()

@@ -53,7 +53,38 @@ class Model:
         Lp = -torch.sum(pen_state * torch.log(q)) / float((self.N_max + 1) * self.hps.batch_size)
         return Ls + Lp, Ls, Lp
 
-    def train(self):
+    def train_RNN(self):
+
+        # Optimizers
+        optimizer = torch.optim.Adam(self.generator.parameters(), lr=self.hps.lr)
+        for i in range(self.hps.num_epoch):
+
+            batch, lengths = self.data_loader.get_batch(self.hps.batch_size)
+            z = Variable(torch.zeros((self.hps.batch_size, self.hps.latent_vector_length)).cuda().float())
+            z_stack = torch.stack([z] * (self.N_max + 1))
+            inputs = torch.cat([batch, z_stack], 2)
+
+            optimizer.zero_grad()
+            pi, mu_x, mu_y, sigma_x, sigma_y, rho_xy, q, _, _ = self.generator(inputs, z, len_out=self.N_max + 1)
+            mask, delta_x, delta_y, pen_state = self.get_ground_truth(batch, lengths)
+            loss, Ls, Lp = self.compute_reconstruction_loss(mask, delta_x, delta_y, pen_state, pi, mu_x, mu_y,
+                                                            sigma_x, sigma_y,
+                                                            rho_xy,
+                                                            q)
+
+            loss.backward()
+            optimizer.step()
+
+            print('epoch', i, 'reconstruction loss', loss.data[0])
+            if (i % 100 == 0):
+                torch.save(self,
+                           self.hps.model_path.format("rnn_only_" + self.dataset_name, self.hps.tau,
+                                                      self.hps.adv_loss_weight))
+                utils.generate_image_with_model(self.N_max, self.generator, "rnn_only_" + self.dataset_name,
+                                                self.hps.tau,
+                                                self.hps.adv_loss_weight, epoch=i)
+
+    def train_GAN(self):
 
         # Optimizers
         optimizer_G = torch.optim.Adam(self.generator.parameters(), lr=self.hps.lr)
