@@ -14,8 +14,7 @@ class Discriminator(nn.Module):
         # Input data is 5 dimensional because data is in 5 stroke format
         self.lstm = nn.LSTM(5, self.hps.enc_hidden_size, dropout=self.hps.dropout, bidirectional=True)
         # nn.Linear(input dimension, output dimension)
-        self.mu_func = nn.Linear(2 * self.hps.enc_hidden_size, self.hps.latent_vector_length)
-        self.sigma_func = nn.Linear(2 * self.hps.enc_hidden_size, self.hps.latent_vector_length)
+        self.h_func = nn.Linear(2 * self.hps.enc_hidden_size, self.hps.latent_vector_length)
         self.fully_connect = nn.Linear(self.hps.latent_vector_length, 1)
         self.sigmoid = nn.Sigmoid()
 
@@ -28,13 +27,7 @@ class Discriminator(nn.Module):
         hidden_forward, hidden_backward = torch.split(hn, 1, 0)
         hidden_final = torch.cat([hidden_forward.squeeze(0), hidden_backward.squeeze(0)], 1)
 
-        mu = self.mu_func(hidden_final)
-        sigma_hat = self.sigma_func(hidden_final)
-        sigma = torch.exp(sigma_hat / 2.)
-
-        N = Variable(
-            torch.normal(torch.zeros(self.hps.latent_vector_length), torch.ones(self.hps.latent_vector_length)).cuda())
-        z = mu + sigma * N
+        z = self.h_func(hidden_final)
         fc = self.fully_connect(z)
         decision = self.sigmoid(fc)
         return decision.squeeze()
