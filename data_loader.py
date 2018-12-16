@@ -16,6 +16,13 @@ class DataLoader:
         length_list = [len(sample) for sample in self.data]
         return max(length_list)
 
+    '''
+    This function is derived from a similar function from this repository
+    Title: Pytorch-Sketch-RNN
+    Author: alexis-jacq
+    Availability: https://github.com/alexis-jacq/Pytorch-Sketch-RNN
+    '''
+
     def clean_data(self):
         cleaned_data = []
         for sample in self.data:
@@ -25,6 +32,13 @@ class DataLoader:
             cleaned_data.append(sample)
         self.data = cleaned_data
 
+    '''
+    This function is derived from a similar function from this repository
+    Title: Pytorch-Sketch-RNN
+    Author: alexis-jacq
+    Availability: https://github.com/alexis-jacq/Pytorch-Sketch-RNN
+    '''
+
     def get_normalize_scale_factor(self):
         temp_data = []
         for i in range(len(self.data)):
@@ -32,6 +46,13 @@ class DataLoader:
                 temp_data.append(self.data[i][j][0])
                 temp_data.append(self.data[i][j][1])
         return np.std(np.array(temp_data))
+
+    '''
+    This function is derived from a similar function from this repository
+    Title: Pytorch-Sketch-RNN
+    Author: alexis-jacq
+    Availability: https://github.com/alexis-jacq/Pytorch-Sketch-RNN
+    '''
 
     def normalize(self):
         self.scale_factor = self.get_normalize_scale_factor()

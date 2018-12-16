@@ -9,7 +9,12 @@ from hyperparameters import HyperParameters
 
 hps = HyperParameters()
 
-
+'''
+This function is derived from a similar function from this repository
+Title: Pytorch-Sketch-RNN
+Author: alexis-jacq
+Availability: https://github.com/alexis-jacq/Pytorch-Sketch-RNN
+'''
 def apply_temperature_hyperparameter(distribution):
     new_distribution = np.log(distribution) / hps.tau
     new_distribution -= new_distribution.max()
@@ -73,7 +78,12 @@ def generate_sequences_from_distributions(pi, mu_x, mu_y, sigma_x, sigma_y, rho_
     result_sequences = Variable(torch.from_numpy(np.stack(result_sequences, 1)).cuda().float())
     return result_sequences
 
-
+'''
+This function is derived from a similar function from this repository
+Title: Pytorch-Sketch-RNN
+Author: alexis-jacq
+Availability: https://github.com/alexis-jacq/Pytorch-Sketch-RNN
+'''
 def make_image(sequence, image_name, dataset_name, tau, adv_loss_weight):
     strokes = np.split(sequence, np.where(sequence[:, 3] > 0)[0] + 1)
     fig = plt.figure()

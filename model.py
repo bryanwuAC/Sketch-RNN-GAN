@@ -21,6 +21,12 @@ class Model:
         self.data_loader = DataLoader(self.data)
         self.N_max = self.data_loader.N_max
 
+    '''
+    This function is derived from a similar function from this repository
+    Title: Pytorch-Sketch-RNN
+    Author: alexis-jacq
+    Availability: https://github.com/alexis-jacq/Pytorch-Sketch-RNN
+    '''
     def get_ground_truth(self, batch, sequence_lengths):
         end_of_sequence = Variable(torch.stack([torch.Tensor([0, 0, 0, 0, 1])] * batch.size()[1]).cuda()).unsqueeze(0)
         batch = torch.cat([batch, end_of_sequence], 0)
@@ -37,6 +43,12 @@ class Model:
                                  Variable(batch.data[1:, :, 4].detach())], 2)
         return mask, delta_x, delta_y, pen_state
 
+    '''
+    This function is derived from a similar function from this repository
+    Title: Pytorch-Sketch-RNN
+    Author: alexis-jacq
+    Availability: https://github.com/alexis-jacq/Pytorch-Sketch-RNN
+    '''
     def compute_bivariate_normal_pdf(self, delta_x, delta_y, mu_x, mu_y, sigma_x, sigma_y, rho_xy):
         z_x = ((delta_x - mu_x) / sigma_x) ** 2
         z_y = ((delta_y - mu_y) / sigma_y) ** 2
@@ -45,6 +57,12 @@ class Model:
         const = 1 / (2 * np.pi * sigma_x * sigma_y * torch.sqrt(1 - rho_xy ** 2))
         return const * exp
 
+    '''
+    This function is derived from a similar function from this repository
+    Title: Pytorch-Sketch-RNN
+    Author: alexis-jacq
+    Availability: https://github.com/alexis-jacq/Pytorch-Sketch-RNN
+    '''
     def compute_reconstruction_loss(self, mask, delta_x, delta_y, pen_state, pi, mu_x, mu_y, sigma_x, sigma_y, rho_xy,
                                     q):
         bivariate_normal_pdf = self.compute_bivariate_normal_pdf(delta_x, delta_y, mu_x, mu_y, sigma_x, sigma_y, rho_xy)
@@ -80,7 +98,7 @@ class Model:
                 torch.save(self,
                            self.hps.model_path.format("rnn_only_" + self.dataset_name, self.hps.tau,
                                                       self.hps.adv_loss_weight))
-                utils.generate_image_with_model(self.N_max, self.generator, "rnn_only_" + self.dataset_name,
+                utils.generate_image_with_model(self.N_max, self.generator, "rnn_" + self.dataset_name,
                                                 self.hps.tau,
                                                 self.hps.adv_loss_weight, epoch=i)
 
