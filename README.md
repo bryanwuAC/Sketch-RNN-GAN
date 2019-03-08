@@ -14,3 +14,5 @@ Please take the following steps to run our model:
 We have placed one dataset (bicycle) in dataset/. To run with additional datasets, download from https://console.cloud.google.com/storage/browser/quickdraw_dataset/sketchrnn and put *.npz in dataset/.
 
 
+For algorithm details and experiment result, see this paper: https://1drv.ms/b/s!AkpHFm7pqfBnhbJ1PxNpLtlfx452jw
+
